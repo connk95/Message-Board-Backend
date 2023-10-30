@@ -14,12 +14,12 @@ export class PostsService {
     date: string,
     user: string,
     likes: number,
-    comments: string,
+    comments: [],
   ) {
     const newPost = new this.postModel({
       title,
       body,
-      date,
+      date: new Date().toString().slice(4, 21),
       user,
       likes,
       comments,
@@ -59,7 +59,7 @@ export class PostsService {
     date: string,
     user: string,
     likes: number,
-    comments: string,
+    comments: [],
   ) {
     const updatedPost = await this.findPost(postId);
     if (title) {

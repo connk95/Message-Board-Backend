@@ -4,9 +4,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
+import { CommentsModule } from './comments/comments.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [PostsModule, MongooseModule.forRoot('mongoURL')],
+  imports: [
+    PostsModule,
+    CommentsModule,
+    UsersModule,
+    MongooseModule.forRoot('mongo'),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

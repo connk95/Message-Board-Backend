@@ -21,7 +21,7 @@ export class PostsController {
     @Body('date') postDate: string,
     @Body('user') postUser: string,
     @Body('likes') postLikes: number,
-    @Body('comments') postComments: string,
+    @Body('comments') postComments: [],
   ) {
     const generatedId = await this.postsService.insertPost(
       postTitle,
@@ -53,7 +53,7 @@ export class PostsController {
     @Body('date') postDate: string,
     @Body('user') postUser: string,
     @Body('likes') postLikes: number,
-    @Body('comments') postComments: string,
+    @Body('comments') postComments: [],
   ) {
     await this.postsService.updatePost(
       postId,
@@ -68,7 +68,7 @@ export class PostsController {
   }
 
   @Delete(':id')
-  async removePostt(@Param('id') postId: string) {
+  async removePost(@Param('id') postId: string) {
     await this.postsService.deletePost(postId);
     return null;
   }
