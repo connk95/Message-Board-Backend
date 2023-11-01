@@ -9,28 +9,17 @@ import {
 } from '@nestjs/common';
 
 import { PostsService } from './posts.service';
+import { InsertPostDto, UpdatePostDto } from './post.dto';
+import { Posts } from './post.model';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  async addPost(
-    @Body('title') postTitle: string,
-    @Body('body') postBody: string,
-    @Body('date') postDate: string,
-    @Body('user') postUser: string,
-    @Body('likes') postLikes: number,
-    @Body('comments') postComments: [],
-  ) {
-    const generatedId = await this.postsService.insertPost(
-      postTitle,
-      postBody,
-      postDate,
-      postUser,
-      postLikes,
-      postComments,
-    );
+  //will this work??????
+  public async addPost(@Body() body: InsertPostDto): Promise<{ id: string }> {
+    const generatedId = await this.postsService.insertPost(body);
     return { id: generatedId };
   }
 
@@ -46,26 +35,32 @@ export class PostsController {
   }
 
   @Patch(':id')
-  async updatePost(
+  public async updatePost(
     @Param('id') postId: string,
-    @Body('title') postTitle: string,
-    @Body('body') postBody: string,
-    @Body('date') postDate: string,
-    @Body('user') postUser: string,
-    @Body('likes') postLikes: number,
-    @Body('comments') postComments: [],
-  ) {
-    await this.postsService.updatePost(
-      postId,
-      postTitle,
-      postBody,
-      postDate,
-      postUser,
-      postLikes,
-      postComments,
-    );
-    return null;
+    @Body() body: UpdatePostDto,
+  ): Promise<Posts> {
+    return await this.postsService.updatePost(postId, body);
   }
+
+  //   @Param('id') postId: string,
+  //   // @Body('title') postTitle: string,
+  //   // @Body('body') postBody: string,
+  //   // // @Body('date') postDate: string,
+  //   // @Body('user') postUser: string,
+  //   // @Body('likes') postLikes: number,
+  //   // @Body('comments') postComments: [],
+  // ) {
+  //   await this.postsService.updatePost(
+  //     postId,
+  //     postTitle,
+  //     postText,
+  //     // postDate,
+  //     postUser,
+  //     postLikes,
+  //     postComments,
+  //   );
+  //   return null;
+  // }
 
   @Delete(':id')
   async removePost(@Param('id') postId: string) {
