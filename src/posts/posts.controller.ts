@@ -42,26 +42,6 @@ export class PostsController {
     return await this.postsService.updatePost(postId, body);
   }
 
-  //   @Param('id') postId: string,
-  //   // @Body('title') postTitle: string,
-  //   // @Body('body') postBody: string,
-  //   // // @Body('date') postDate: string,
-  //   // @Body('user') postUser: string,
-  //   // @Body('likes') postLikes: number,
-  //   // @Body('comments') postComments: [],
-  // ) {
-  //   await this.postsService.updatePost(
-  //     postId,
-  //     postTitle,
-  //     postText,
-  //     // postDate,
-  //     postUser,
-  //     postLikes,
-  //     postComments,
-  //   );
-  //   return null;
-  // }
-
   @Delete(':id')
   async removePost(@Param('id') postId: string) {
     await this.postsService.deletePost(postId);

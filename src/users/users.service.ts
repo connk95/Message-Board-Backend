@@ -3,76 +3,47 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { User } from './user.model';
+import { InsertUserDto, UpdateUserDto } from './user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  async insertUser(
-    username: string,
-    password: string,
-    posts: [],
-    likes: [],
-    comments: [],
-  ) {
+  async insertUser({
+    username,
+    password,
+    email,
+  }: InsertUserDto): Promise<string> {
     const newUser = new this.userModel({
       username,
       password,
-      posts,
-      likes,
-      comments,
+      email,
     });
     const result = await newUser.save();
+
+    if (!result) {
+      throw new Error('Could not create user');
+    }
+
     return result.id as string;
   }
 
-  async getUsers() {
-    const users = await this.userModel.find().exec();
-    return users.map((user) => ({
-      id: user.id,
-      username: user.username,
-      password: user.password,
-      likes: user.likes,
-      comments: user.comments,
-    }));
+  public async getUsers(): Promise<User[]> {
+    const users = await this.userModel.find().populate('username').exec();
+    return users;
   }
 
-  async getSingleUser(userId: string) {
+  async getSingleUser(userId: string): Promise<User> {
     const user = await this.findUser(userId);
-    return {
-      id: user.id,
-      username: user.username,
-      password: user.password,
-      likes: user.likes,
-      comments: user.comments,
-    };
+    return user;
   }
 
-  async updateUser(
-    userId: string,
-    username: string,
-    password: string,
-    posts: [],
-    likes: [],
-    comments: [],
-  ) {
-    const updatedUser = await this.findUser(userId);
-    if (username) {
-      updatedUser.username = username;
+  async updateUser(userId: string, body: UpdateUserDto): Promise<User> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(userId, body);
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
     }
-    if (password) {
-      updatedUser.password = password;
-    }
-    if (posts) {
-      updatedUser.posts = posts;
-    }
-    if (likes) {
-      updatedUser.likes = likes;
-    }
-    if (comments) {
-      updatedUser.comments = comments;
-    }
-    updatedUser.save();
+    return updatedUser;
   }
 
   async deleteUser(userId: string) {

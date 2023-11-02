@@ -2,66 +2,50 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Comment } from './comment.model';
+import { Comments } from './comment.model';
+import { InsertCommentDto, UpdateCommentDto } from './comment.dto';
 
 @Injectable()
 export class CommentsService {
   constructor(
-    @InjectModel('Comment') private readonly commentModel: Model<Comment>,
+    @InjectModel('Comment') private readonly commentModel: Model<Comments>,
   ) {}
 
-  async insertComment(body: string, date: string, user: string, likes: number) {
+  async insertComment({ text, user, post }: InsertCommentDto): Promise<string> {
     const newComment = new this.commentModel({
-      body,
-      date,
-      user,
-      likes,
+      text,
+      user, //user reference
+      post, //post reference
     });
     const result = await newComment.save();
+    if (!result) {
+      throw new Error('Could not add comment');
+    }
     return result.id as string;
   }
 
   async getComments() {
-    const comments = await this.commentModel.find().exec();
-    return comments.map((comment) => ({
-      id: comment.id,
-      body: comment.body,
-      user: comment.user,
-      likes: comment.likes,
-    }));
+    const comments = await this.commentModel.find().populate('user').exec();
+    return comments;
   }
 
   async getSingleComment(commentId: string) {
     const comment = await this.findComment(commentId);
-    return {
-      id: comment.id,
-      body: comment.body,
-      user: comment.user,
-      likes: comment.likes,
-    };
+    return comment;
   }
 
   async updateComment(
     commentId: string,
-    body: string,
-    date: string,
-    user: string,
-    likes: number,
-  ) {
-    const updatedComment = await this.findComment(commentId);
-    if (body) {
-      updatedComment.body = body;
+    body: UpdateCommentDto,
+  ): Promise<Comments> {
+    const updatedComment = await this.commentModel.findByIdAndUpdate(
+      commentId,
+      body,
+    );
+    if (!updatedComment) {
+      throw new NotFoundException('Comment not found');
     }
-    if (date) {
-      updatedComment.date = date;
-    }
-    if (user) {
-      updatedComment.user = user;
-    }
-    if (likes) {
-      updatedComment.likes = likes;
-    }
-    updatedComment.save();
+    return updatedComment;
   }
 
   async deleteComment(commentId: string) {
@@ -71,7 +55,7 @@ export class CommentsService {
     }
   }
 
-  private async findComment(id: string): Promise<Comment> {
+  private async findComment(id: string): Promise<Comments> {
     let comment;
     try {
       comment = await this.commentModel.findById(id).exec();

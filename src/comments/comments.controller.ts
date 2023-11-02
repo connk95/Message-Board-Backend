@@ -9,24 +9,18 @@ import {
 } from '@nestjs/common';
 
 import { CommentsService } from './comments.service';
+import { InsertCommentDto, UpdateCommentDto } from './comment.dto';
+import { Comments } from './comment.model';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  async addComment(
-    @Body('body') commentBody: string,
-    @Body('date') commentDate: string,
-    @Body('user') commentUser: string,
-    @Body('likes') commentLikes: number,
-  ) {
-    const generatedId = await this.commentsService.insertComment(
-      commentBody,
-      commentDate,
-      commentUser,
-      commentLikes,
-    );
+  public async addComment(
+    @Body() body: InsertCommentDto,
+  ): Promise<{ id: string }> {
+    const generatedId = await this.commentsService.insertComment(body);
     return { id: generatedId };
   }
 
@@ -42,21 +36,11 @@ export class CommentsController {
   }
 
   @Patch(':id')
-  async updateComment(
+  public async updateComment(
     @Param('id') commentId: string,
-    @Body('body') commentBody: string,
-    @Body('date') commentDate: string,
-    @Body('user') commentUser: string,
-    @Body('likes') commentLikes: number,
-  ) {
-    await this.commentsService.updateComment(
-      commentId,
-      commentBody,
-      commentDate,
-      commentUser,
-      commentLikes,
-    );
-    return null;
+    @Body() body: UpdateCommentDto,
+  ): Promise<Comments> {
+    return await this.commentsService.updateComment(commentId, body);
   }
 
   @Delete(':id')

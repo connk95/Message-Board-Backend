@@ -1,20 +1,29 @@
 import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { User } from 'src/users/user.model';
+import { Comments } from 'src/comments/comment.model';
 
-export const PostSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  body: { type: String, required: true },
-  date: { type: String, required: false },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  likes: { type: Number, required: false },
-  comments: { type: Array, required: false },
-});
-
-export interface Post extends mongoose.Document {
-  id: string;
+@Schema({ timestamps: true })
+export class Posts extends Document {
+  @Prop({ required: true })
   title: string;
-  body: string;
-  date: string;
-  user: string;
-  likes: number;
-  comments: [];
+
+  @Prop({ required: true })
+  text: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  user: User;
+
+  @Prop()
+  likes: User[];
+
+  @Prop()
+  comments: Comments[];
+
+  createdAt?: Date;
+
+  updatedAt?: Date;
 }
+
+export const PostSchema = SchemaFactory.createForClass(Posts);

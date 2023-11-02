@@ -2,85 +2,42 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Post } from './post.model';
+import { Posts } from './post.model';
+import { InsertPostDto, UpdatePostDto } from './post.dto';
 
 @Injectable()
 export class PostsService {
-  constructor(@InjectModel('Post') private readonly postModel: Model<Post>) {}
+  constructor(@InjectModel('Post') private readonly postModel: Model<Posts>) {}
 
-  async insertPost(
-    title: string,
-    body: string,
-    date: string,
-    user: string,
-    likes: number,
-    comments: [],
-  ) {
+  async insertPost({ title, text, user }: InsertPostDto): Promise<string> {
     const newPost = new this.postModel({
       title,
-      body,
-      date: new Date().toString().slice(4, 21),
-      user,
-      likes,
-      comments,
+      text,
+      user, //user Refetence
     });
     const result = await newPost.save();
+    if (!result) {
+      throw new Error('Could not add post');
+    }
     return result.id as string;
   }
 
-  async getPosts() {
-    const posts = await this.postModel.find().exec();
-    return posts.map((post) => ({
-      id: post.id,
-      title: post.title,
-      body: post.body,
-      user: post.user,
-      likes: post.likes,
-      comments: post.comments,
-    }));
+  public async getPosts(): Promise<Posts[]> {
+    const posts = await this.postModel.find().populate('user').exec(); //why populate user?
+    return posts;
   }
 
-  async getSinglePost(postId: string) {
+  async getSinglePost(postId: string): Promise<Posts> {
     const post = await this.findPost(postId);
-    return {
-      id: post.id,
-      title: post.title,
-      body: post.body,
-      user: post.user,
-      likes: post.likes,
-      comments: post.comments,
-    };
+    return post;
   }
 
-  async updatePost(
-    postId: string,
-    title: string,
-    body: string,
-    date: string,
-    user: string,
-    likes: number,
-    comments: [],
-  ) {
-    const updatedPost = await this.findPost(postId);
-    if (title) {
-      updatedPost.title = title;
+  async updatePost(postId: string, body: UpdatePostDto): Promise<Posts> {
+    const updatedPost = await this.postModel.findByIdAndUpdate(postId, body);
+    if (!updatedPost) {
+      throw new NotFoundException('Post not found');
     }
-    if (body) {
-      updatedPost.body = body;
-    }
-    if (date) {
-      updatedPost.date = date;
-    }
-    if (user) {
-      updatedPost.user = user;
-    }
-    if (likes) {
-      updatedPost.likes = likes;
-    }
-    if (comments) {
-      updatedPost.comments = comments;
-    }
-    updatedPost.save();
+    return updatedPost;
   }
 
   async deletePost(postId: string) {
@@ -90,12 +47,12 @@ export class PostsService {
     }
   }
 
-  private async findPost(id: string): Promise<Post> {
+  private async findPost(id: string): Promise<Posts> {
     let post;
     try {
       post = await this.postModel.findById(id).exec();
     } catch (error) {
-      throw new NotFoundException('Could not find post.');
+      throw new NotFoundException(error.message);
     }
     if (!post) {
       throw new NotFoundException('Could not find post.');

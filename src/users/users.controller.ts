@@ -9,26 +9,16 @@ import {
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
+import { InsertUserDto, UpdateUserDto } from './user.dto';
+import { User } from './user.model';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async addUser(
-    @Body('username') userUsername: string,
-    @Body('password') userPassword: string,
-    @Body('posts') userPosts: [],
-    @Body('likes') userLikes: [],
-    @Body('comments') userComments: [],
-  ) {
-    const generatedId = await this.usersService.insertUser(
-      userUsername,
-      userPassword,
-      userPosts,
-      userLikes,
-      userComments,
-    );
+  public async addUser(@Body() body: InsertUserDto): Promise<{ id: string }> {
+    const generatedId = await this.usersService.insertUser(body);
     return { id: generatedId };
   }
 
@@ -44,23 +34,11 @@ export class UsersController {
   }
 
   @Patch(':id')
-  async updateUser(
+  public async updateUser(
     @Param('id') userId: string,
-    @Body('username') userUsername: string,
-    @Body('password') userPassword: string,
-    @Body('posts') userPosts: [],
-    @Body('likes') userLikes: [],
-    @Body('comments') userComments: [],
-  ) {
-    await this.usersService.updateUser(
-      userId,
-      userUsername,
-      userPassword,
-      userPosts,
-      userLikes,
-      userComments,
-    );
-    return null;
+    @Body() body: UpdateUserDto,
+  ): Promise<User> {
+    return await this.usersService.updateUser(userId, body);
   }
 
   @Delete(':id')
