@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class User extends Document {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   username: string;
 
   @Prop({ required: true })
@@ -13,7 +13,13 @@ export class User extends Document {
   email: string;
 
   @Prop()
+  posts: [];
+
+  @Prop()
   likes: [];
+
+  @Prop()
+  comments: [];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

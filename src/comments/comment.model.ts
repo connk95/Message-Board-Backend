@@ -23,4 +23,4 @@ export class Comments extends Document {
   updatedAt?: Date;
 }
 
-export const CommentSchema = SchemaFactory.createForClass(Comment);
+export const CommentSchema = SchemaFactory.createForClass(Comments);

@@ -6,6 +6,7 @@ export class InsertPostDto {
   title: string;
 
   @IsString()
+  @MinLength(1)
   @MaxLength(220)
   text: string;
 
@@ -15,6 +16,7 @@ export class InsertPostDto {
 
 export class UpdatePostDto {
   @IsString()
+  @MinLength(1)
   @MaxLength(220)
   text?: string;
 

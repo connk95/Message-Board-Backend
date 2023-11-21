@@ -17,7 +17,6 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  //will this work??????
   public async addPost(@Body() body: InsertPostDto): Promise<{ id: string }> {
     const generatedId = await this.postsService.insertPost(body);
     return { id: generatedId };
@@ -26,11 +25,13 @@ export class PostsController {
   @Get()
   async getAllPosts() {
     const posts = await this.postsService.getPosts();
+    console.log('posttest');
     return posts;
   }
 
   @Get(':id')
   getPost(@Param('id') postId: string) {
+    console.log(postId);
     return this.postsService.getSinglePost(postId);
   }
 

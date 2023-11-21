@@ -9,6 +9,21 @@ import { InsertUserDto, UpdateUserDto } from './user.dto';
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
+  private readonly users = [
+    {
+      userId: 1,
+      username: 'john',
+      password: 'changeme',
+      email: 'testem',
+    },
+    {
+      userId: 2,
+      username: 'maria',
+      password: 'guess',
+      email: 'testme',
+    },
+  ];
+
   async insertUser({
     username,
     password,
@@ -19,6 +34,7 @@ export class UsersService {
       password,
       email,
     });
+
     const result = await newUser.save();
 
     if (!result) {
@@ -64,5 +80,9 @@ export class UsersService {
       throw new NotFoundException('Could not find user.');
     }
     return user;
+  }
+
+  async findByUsername(username: string): Promise<User> {
+    return this.userModel.findOne((user) => user.username === username);
   }
 }
