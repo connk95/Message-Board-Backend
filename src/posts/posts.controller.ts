@@ -25,13 +25,11 @@ export class PostsController {
   @Get()
   async getAllPosts() {
     const posts = await this.postsService.getPosts();
-    console.log('posttest');
     return posts;
   }
 
   @Get(':id')
   getPost(@Param('id') postId: string) {
-    console.log(postId);
     return this.postsService.getSinglePost(postId);
   }
 
