@@ -9,20 +9,20 @@ import { InsertUserDto, UpdateUserDto } from './user.dto';
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-      email: 'testem',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-      email: 'testme',
-    },
-  ];
+  // private readonly users = [
+  //   {
+  //     userId: 1,
+  //     username: 'john',
+  //     password: 'changeme',
+  //     email: 'testem',
+  //   },
+  //   {
+  //     userId: 2,
+  //     username: 'maria',
+  //     password: 'guess',
+  //     email: 'testme',
+  //   },
+  // ];
 
   async insertUser({
     username,
@@ -54,6 +54,24 @@ export class UsersService {
     return user;
   }
 
+  async findByUsername(username: string): Promise<User | undefined> {
+    console.log('test user service');
+    // const user = await this.userModel
+    //   .find((users) => users.username === username)
+    //   .populate('username')
+    //   .exec();
+    try {
+      const user = await this.userModel.findOne({ username }).exec();
+      if (user && user.username == username) {
+        return user;
+      } else {
+        throw new NotFoundException('User not found');
+      }
+    } catch (error) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
   async updateUser(userId: string, body: UpdateUserDto): Promise<User> {
     const updatedUser = await this.userModel.findByIdAndUpdate(userId, body);
     if (!updatedUser) {
@@ -65,7 +83,7 @@ export class UsersService {
   async deleteUser(userId: string) {
     const result = await this.userModel.deleteOne({ _id: userId }).exec();
     if (result.deletedCount === 0) {
-      throw new NotFoundException('Could not find user.');
+      throw new NotFoundException('User not found');
     }
   }
 
@@ -74,15 +92,11 @@ export class UsersService {
     try {
       user = await this.userModel.findById(id).exec();
     } catch (error) {
-      throw new NotFoundException('Could not find user.');
+      throw new NotFoundException('User not found');
     }
     if (!user) {
-      throw new NotFoundException('Could not find user.');
+      throw new NotFoundException('User not found');
     }
     return user;
-  }
-
-  async findByUsername(username: string): Promise<User> {
-    return this.userModel.findOne((user) => user.username === username);
   }
 }

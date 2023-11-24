@@ -7,6 +7,8 @@ import {
   Patch,
   Delete,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { UseGuards } from '@nestjs/common';
 
 import { UsersService } from './users.service';
 import { InsertUserDto, UpdateUserDto } from './user.dto';
@@ -31,6 +33,13 @@ export class UsersController {
   @Get(':id')
   getUser(@Param('id') userId: string) {
     return this.usersService.getSingleUser(userId);
+  }
+
+  @UseGuards(AuthGuard())
+  @Get()
+  getUsername(username) {
+    console.log('test controller');
+    return this.usersService.findByUsername(username);
   }
 
   @Patch(':id')
