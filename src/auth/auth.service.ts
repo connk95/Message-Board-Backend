@@ -14,7 +14,6 @@ export class AuthService {
     const user = await this.usersService.findByUsername(username);
     console.log('test validate');
     if (user && user.password === pass) {
-      //   const { password, ...result } = user;
       return user;
     }
     return null;
@@ -25,6 +24,7 @@ export class AuthService {
     console.log(payload);
     return {
       access_token: this.jwtService.sign(payload),
+      user,
     };
   }
 }

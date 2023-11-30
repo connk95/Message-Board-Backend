@@ -9,21 +9,6 @@ import { InsertUserDto, UpdateUserDto } from './user.dto';
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  // private readonly users = [
-  //   {
-  //     userId: 1,
-  //     username: 'john',
-  //     password: 'changeme',
-  //     email: 'testem',
-  //   },
-  //   {
-  //     userId: 2,
-  //     username: 'maria',
-  //     password: 'guess',
-  //     email: 'testme',
-  //   },
-  // ];
-
   async insertUser({
     username,
     password,
@@ -56,10 +41,6 @@ export class UsersService {
 
   async findByUsername(username: string): Promise<User | undefined> {
     console.log('test user service');
-    // const user = await this.userModel
-    //   .find((users) => users.username === username)
-    //   .populate('username')
-    //   .exec();
     try {
       const user = await this.userModel.findOne({ username }).exec();
       if (user && user.username == username) {
