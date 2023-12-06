@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import * as mongoose from 'mongoose';
 
 @Schema()
 export class User extends Document {
@@ -12,8 +13,11 @@ export class User extends Document {
   @Prop({ required: true })
   email: string;
 
-  @Prop()
-  posts: [];
+  // @Prop()
+  // posts: [];
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Posts' }] })
+  posts: mongoose.Types.ObjectId[];
 
   @Prop()
   likes: [];

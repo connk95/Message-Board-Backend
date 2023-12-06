@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as mongoose from 'mongoose';
 
 import { User } from './user.model';
 import { InsertUserDto, UpdateUserDto } from './user.dto';
@@ -66,6 +67,19 @@ export class UsersService {
     if (result.deletedCount === 0) {
       throw new NotFoundException('User not found');
     }
+  }
+
+  async addPostToUser(userId: string, postId: string): Promise<void> {
+    const user = await this.userModel.findById(userId).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const postIdObject = new mongoose.Types.ObjectId(postId);
+
+    user.posts.push(postIdObject);
+    await user.save();
   }
 
   private async findUser(id: string): Promise<User> {
