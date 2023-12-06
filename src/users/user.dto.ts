@@ -29,4 +29,7 @@ export class UpdateUserDto {
 
   @IsArray()
   likes?: [];
+
+  @IsString()
+  newPostId?: string;
 }

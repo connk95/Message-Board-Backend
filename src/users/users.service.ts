@@ -55,10 +55,20 @@ export class UsersService {
   }
 
   async updateUser(userId: string, body: UpdateUserDto): Promise<User> {
-    const updatedUser = await this.userModel.findByIdAndUpdate(userId, body);
+    const updatedUser = await this.userModel.findByIdAndUpdate(userId, body, {
+      new: true,
+    });
     if (!updatedUser) {
       throw new NotFoundException('User not found');
     }
+
+    if (body.newPostId) {
+      const postIdObject = new mongoose.Types.ObjectId(body.newPostId);
+      updatedUser.posts.push(postIdObject);
+    }
+
+    await updatedUser.save();
+
     return updatedUser;
   }
 
@@ -69,18 +79,18 @@ export class UsersService {
     }
   }
 
-  async addPostToUser(userId: string, postId: string): Promise<void> {
-    const user = await this.userModel.findById(userId).exec();
+  // async addPostToUser(userId: string, postId: string): Promise<void> {
+  //   const user = await this.userModel.findById(userId).exec();
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
 
-    const postIdObject = new mongoose.Types.ObjectId(postId);
+  //   const postIdObject = new mongoose.Types.ObjectId(postId);
 
-    user.posts.push(postIdObject);
-    await user.save();
-  }
+  //   user.posts.push(postIdObject);
+  //   await user.save();
+  // }
 
   private async findUser(id: string): Promise<User> {
     let user;

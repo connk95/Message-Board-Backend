@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 import { Posts } from './post.model';
 import { InsertPostDto, UpdatePostDto } from './post.dto';
 import { UsersService } from 'src/users/users.service';
-import { UsersModule } from 'src/users/users.module';
 
 @Injectable()
 export class PostsService {
@@ -25,7 +24,7 @@ export class PostsService {
       throw new Error('Could not add post');
     }
 
-    await this.userService.addPostToUser(user, result._id);
+    await this.userService.updateUser(user, result._id);
 
     return result.id as string;
   }
