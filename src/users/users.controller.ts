@@ -36,9 +36,8 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard())
-  @Get()
-  getUsername(username) {
-    console.log('test controller');
+  @Get(':username')
+  getUsername(@Param('username') username: string) {
     return this.usersService.findByUsername(username);
   }
 

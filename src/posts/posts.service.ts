@@ -4,18 +4,29 @@ import { Model } from 'mongoose';
 
 import { Posts } from './post.model';
 import { InsertPostDto, UpdatePostDto } from './post.dto';
+// import { UsersService } from 'src/users/users.service';
+// import { User } from 'src/users/user.model';
 
 @Injectable()
 export class PostsService {
-  constructor(@InjectModel('Post') private readonly postModel: Model<Posts>) {}
+  constructor(
+    @InjectModel('Post') private readonly postModel: Model<Posts>, // private readonly usersService: UsersService,
+  ) {}
 
   async insertPost({ title, text, user }: InsertPostDto): Promise<string> {
+    // const userId = user._id || user;
     const newPost = new this.postModel({
       title,
       text,
-      user, //user Refetence
+      user,
     });
     const result = await newPost.save();
+
+    // const updatedUser = await this.usersService.updateUserPosts(
+    //   user._id,
+    //   result._id,
+    // );
+
     if (!result) {
       throw new Error('Could not add post');
     }
@@ -23,7 +34,7 @@ export class PostsService {
   }
 
   public async getPosts(): Promise<Posts[]> {
-    const posts = await this.postModel.find().populate('user').exec(); //why populate user?
+    const posts = await this.postModel.find().populate('User').exec();
     return posts;
   }
 
@@ -31,6 +42,19 @@ export class PostsService {
     const post = await this.findPost(postId);
     return post;
   }
+
+  // async findByPostId(postId: string): Promise<Posts> {
+  //   try {
+  //     const post = await this.postModel.findOne({ postId }).exec();
+  //     if (post && post.id == postId) {
+  //       return post;
+  //     } else {
+  //       throw new NotFoundException('Post not found');
+  //     }
+  //   } catch (error) {
+  //     throw new NotFoundException('Post not found');
+  //   }
+  // }
 
   async updatePost(postId: string, body: UpdatePostDto): Promise<Posts> {
     const updatedPost = await this.postModel.findByIdAndUpdate(postId, body);
@@ -50,7 +74,8 @@ export class PostsService {
   private async findPost(id: string): Promise<Posts> {
     let post;
     try {
-      post = await this.postModel.findById(id).exec();
+      post = await (await this.postModel.findOne({ id })).populate('User');
+      // .exec();
     } catch (error) {
       throw new NotFoundException(error.message);
     }

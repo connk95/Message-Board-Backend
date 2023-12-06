@@ -1,17 +1,24 @@
-import { IsString, MinLength, MaxLength, IsArray } from 'class-validator';
+import {
+  IsString,
+  MinLength,
+  MaxLength,
+  IsArray,
+  IsObject,
+} from 'class-validator';
+import { User } from 'src/users/user.model';
 
 export class InsertPostDto {
   @IsString()
-  @MinLength(1)
+  @MinLength(3)
   title: string;
 
   @IsString()
   @MinLength(1)
-  @MaxLength(220)
+  @MaxLength(240)
   text: string;
 
-  @IsString()
-  user: string;
+  @IsObject()
+  user: User;
 }
 
 export class UpdatePostDto {

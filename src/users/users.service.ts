@@ -30,7 +30,10 @@ export class UsersService {
   }
 
   public async getUsers(): Promise<User[]> {
-    const users = await this.userModel.find().populate('username').exec();
+    const users = await this.userModel
+      .find()
+      .populate('posts', 'likes', 'comments')
+      .exec();
     return users;
   }
 
@@ -40,7 +43,6 @@ export class UsersService {
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
-    console.log('test user service');
     try {
       const user = await this.userModel.findOne({ username }).exec();
       if (user && user.username == username) {
@@ -58,6 +60,21 @@ export class UsersService {
     if (!updatedUser) {
       throw new NotFoundException('User not found');
     }
+    return updatedUser;
+  }
+
+  async updateUserPosts(userId: string, postId: string): Promise<User> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        $push: { posts: postId },
+      },
+      { new: true },
+    );
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
     return updatedUser;
   }
 
