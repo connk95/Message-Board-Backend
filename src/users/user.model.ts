@@ -22,8 +22,8 @@ export class User extends Document {
   @Prop()
   likes: [];
 
-  @Prop()
-  comments: [];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }] })
+  comments?: mongoose.Types.ObjectId[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

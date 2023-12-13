@@ -32,4 +32,7 @@ export class UpdateUserDto {
 
   @IsString()
   newPostId?: string;
+
+  @IsString()
+  newCommentId?: string;
 }

@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { User } from 'src/users/user.model';
-import { Comments } from 'src/comments/comment.model';
+// import { Comments, CommentSchema } from 'src/comments/comment.model';
 
 @Schema({ timestamps: true })
 export class Posts extends Document {
@@ -15,11 +15,14 @@ export class Posts extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
 
+  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }] })
+  // comments: mongoose.Types.ObjectId[];
+
   @Prop()
   likes: User[];
 
-  @Prop()
-  comments: Comments[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }] })
+  comments?: mongoose.Types.ObjectId[];
 
   createdAt?: Date;
 

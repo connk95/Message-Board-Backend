@@ -1,4 +1,6 @@
 import { IsString, MinLength, MaxLength, IsArray } from 'class-validator';
+import { Comments } from 'src/comments/comment.model';
+// import { Comments } from 'src/comments/comment.model';
 
 export class InsertPostDto {
   @IsString()
@@ -22,4 +24,13 @@ export class UpdatePostDto {
 
   @IsArray()
   likes?: [];
+
+  @IsArray()
+  comments?: Comments[];
+
+  @IsString()
+  newCommentId?: string;
+
+  @IsString()
+  user: string;
 }

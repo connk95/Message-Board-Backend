@@ -4,24 +4,44 @@ import { Model } from 'mongoose';
 
 import { Comments } from './comment.model';
 import { InsertCommentDto, UpdateCommentDto } from './comment.dto';
+import { PostsService } from 'src/posts/posts.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class CommentsService {
   constructor(
-    @InjectModel('Comment') private readonly commentModel: Model<Comments>,
+    @InjectModel('Comments') private readonly commentModel: Model<Comments>,
+    private readonly userService: UsersService,
+    private readonly postsService: PostsService,
   ) {}
 
-  async insertComment({ text, user, post }: InsertCommentDto): Promise<string> {
+  async insertComment({
+    text,
+    postId,
+    user,
+  }: InsertCommentDto): Promise<string> {
     const newComment = new this.commentModel({
       text,
-      user, //user reference
-      post, //post reference
+      postId,
+      user,
     });
     const result = await newComment.save();
     if (!result) {
       throw new Error('Could not add comment');
     }
-    return result.id as string;
+    console.log('test comment service');
+
+    console.log(result);
+
+    console.log('comment service post: ', postId);
+    console.log('comment service user: ', user);
+    console.log('comment service text: ', text);
+
+    await this.userService.addCommentToUser(user, result._id);
+    await this.postsService.addCommentToPost(postId, result._id);
+    // await this.postsService.updatePost(post, result.id);
+
+    return result._id as string;
   }
 
   async getComments() {

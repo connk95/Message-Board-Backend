@@ -10,7 +10,10 @@ export class InsertCommentDto {
   user: string;
 
   @IsString()
-  post: string;
+  postId: string;
+
+  // @IsArray()
+  // likes?: [];
 }
 
 export class UpdateCommentDto {

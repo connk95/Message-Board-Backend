@@ -67,7 +67,27 @@ export class UsersService {
       updatedUser.posts.push(postIdObject);
     }
 
+    // if (body.newCommentId) {
+    //   const commentIdObject = new mongoose.Types.ObjectId(body.newCommentId);
+    //   updatedUser.comments.push(commentIdObject);
+    // }
+
     await updatedUser.save();
+
+    return updatedUser;
+  }
+
+  async addCommentToUser(userId: string, commentId: string): Promise<User> {
+    console.log('test addCommentToUser, id: ', commentId);
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $push: { comments: commentId } },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
 
     return updatedUser;
   }
@@ -78,19 +98,6 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
   }
-
-  // async addPostToUser(userId: string, postId: string): Promise<void> {
-  //   const user = await this.userModel.findById(userId).exec();
-
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-
-  //   const postIdObject = new mongoose.Types.ObjectId(postId);
-
-  //   user.posts.push(postIdObject);
-  //   await user.save();
-  // }
 
   private async findUser(id: string): Promise<User> {
     let user;
