@@ -47,11 +47,10 @@ export class PostsService {
 
   async updatePost(postId: string, body?: UpdatePostDto): Promise<Posts> {
     console.log('test 1');
-    const updatedPost = await this.postModel
-      .findByIdAndUpdate(postId, body, {
-        new: true,
-      })
-      .populate('comments');
+    const updatedPost = await this.postModel.findByIdAndUpdate(postId, body, {
+      new: true,
+    });
+
     if (!updatedPost) {
       throw new NotFoundException('Post not found');
     }
@@ -86,7 +85,6 @@ export class PostsService {
       { new: true },
     );
     console.log('post: ', updatedPost);
-    // .populate('comments');
 
     if (!updatedPost) {
       throw new NotFoundException('Post not found');
@@ -105,7 +103,17 @@ export class PostsService {
   private async findPost(id: string): Promise<Posts> {
     let post;
     try {
-      post = await (await this.postModel.findById(id)).populate('user');
+      post = await (
+        await this.postModel.findById(id)
+      ).populate([
+        {
+          path: 'comments',
+          populate: { path: 'user' },
+        },
+        'user',
+      ]);
+
+      // .populate(['user', 'comments']);
     } catch (error) {
       throw new NotFoundException(error.message);
     }
