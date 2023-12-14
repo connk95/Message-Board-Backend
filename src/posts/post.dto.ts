@@ -1,6 +1,5 @@
 import { IsString, MinLength, MaxLength, IsArray } from 'class-validator';
 import { Comments } from 'src/comments/comment.model';
-// import { Comments } from 'src/comments/comment.model';
 
 export class InsertPostDto {
   @IsString()

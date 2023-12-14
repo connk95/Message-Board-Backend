@@ -11,10 +11,7 @@ import {
 import { PostsService } from './posts.service';
 import { InsertPostDto } from './post.dto';
 import { InsertCommentDto } from 'src/comments/comment.dto';
-// import { Posts } from './post.model';
 import { CommentsService } from 'src/comments/comments.service';
-// import { InsertCommentDto } from 'src/comments/comment.dto';
-// import { CommentsService } from 'src/comments/comments.service';
 
 @Controller('posts')
 export class PostsController {
@@ -30,21 +27,8 @@ export class PostsController {
   }
 
   @Patch(':id')
-  public async addComment(
-    // @Param('id') postId: string,
-    @Body() body: InsertCommentDto,
-  ): Promise<string> {
-    // await this.postsService.updatePost(postId, body);
-
-    console.log('body: ', body);
-
-    console.log('post controller postId: ', body.postId);
-
-    // const updatedPost = await this.postsService.getSinglePost(postId);
+  public async addComment(@Body() body: InsertCommentDto): Promise<string> {
     const generatedId = await this.commentsService.insertComment(body);
-    // const updatedPost = await this.postsService.updatePost(postId, body);
-    // return { updatedPost, generatedId };
-    // return updatedPost;
 
     return generatedId;
   }

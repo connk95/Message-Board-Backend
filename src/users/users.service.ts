@@ -41,7 +41,6 @@ export class UsersService {
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
-    console.log('test user service');
     try {
       const user = await this.userModel.findOne({ username }).exec();
       if (user && user.username == username) {
@@ -67,18 +66,12 @@ export class UsersService {
       updatedUser.posts.push(postIdObject);
     }
 
-    // if (body.newCommentId) {
-    //   const commentIdObject = new mongoose.Types.ObjectId(body.newCommentId);
-    //   updatedUser.comments.push(commentIdObject);
-    // }
-
     await updatedUser.save();
 
     return updatedUser;
   }
 
   async addCommentToUser(userId: string, commentId: string): Promise<User> {
-    console.log('test addCommentToUser, id: ', commentId);
     const updatedUser = await this.userModel.findByIdAndUpdate(
       userId,
       { $push: { comments: commentId } },

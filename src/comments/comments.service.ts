@@ -29,17 +29,9 @@ export class CommentsService {
     if (!result) {
       throw new Error('Could not add comment');
     }
-    console.log('test comment service');
-
-    console.log(result);
-
-    console.log('comment service post: ', postId);
-    console.log('comment service user: ', user);
-    console.log('comment service text: ', text);
 
     await this.userService.addCommentToUser(user, result._id);
     await this.postsService.addCommentToPost(postId, result._id);
-    // await this.postsService.updatePost(post, result.id);
 
     return result._id as string;
   }

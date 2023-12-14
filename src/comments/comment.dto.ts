@@ -11,9 +11,6 @@ export class InsertCommentDto {
 
   @IsString()
   postId: string;
-
-  // @IsArray()
-  // likes?: [];
 }
 
 export class UpdateCommentDto {
