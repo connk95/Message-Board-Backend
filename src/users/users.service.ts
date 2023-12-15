@@ -95,7 +95,8 @@ export class UsersService {
   private async findUser(id: string): Promise<User> {
     let user;
     try {
-      user = await this.userModel.findById(id).exec();
+      user = await this.userModel.findById(id).populate(['posts', 'comments']);
+      // .exec();
     } catch (error) {
       throw new NotFoundException('User not found');
     }
