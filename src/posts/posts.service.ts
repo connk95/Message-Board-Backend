@@ -5,11 +5,12 @@ import { Model } from 'mongoose';
 import { Posts } from './post.model';
 import { InsertPostDto, UpdatePostDto } from './post.dto';
 import { UsersService } from 'src/users/users.service';
+import { Comments } from 'src/comments/comment.model';
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectModel('Post') private readonly postModel: Model<Posts>,
+    @InjectModel('Posts') private readonly postModel: Model<Posts>,
     private readonly userService: UsersService,
   ) {}
 
@@ -24,7 +25,7 @@ export class PostsService {
       throw new Error('Could not add post');
     }
 
-    await this.userService.updateUser(user, result._id);
+    await this.userService.addPostToUser(user, result);
 
     return result.id as string;
   }
@@ -51,10 +52,10 @@ export class PostsService {
     return updatedPost;
   }
 
-  async addCommentToPost(postId: string, commentId: string): Promise<Posts> {
+  async addCommentToPost(postId: string, comment: Comments): Promise<Posts> {
     const updatedPost = await this.postModel.findByIdAndUpdate(
       postId,
-      { $push: { comments: commentId } },
+      { $push: { comments: comment } },
       { new: true },
     );
 
@@ -75,9 +76,7 @@ export class PostsService {
   private async findPost(id: string): Promise<Posts> {
     let post;
     try {
-      post = await (
-        await this.postModel.findById(id)
-      ).populate([
+      post = await this.postModel.findById(id).populate([
         {
           path: 'comments',
           populate: { path: 'user' },

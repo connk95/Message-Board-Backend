@@ -30,8 +30,8 @@ export class CommentsService {
       throw new Error('Could not add comment');
     }
 
-    await this.userService.addCommentToUser(user, result._id);
-    await this.postsService.addCommentToPost(postId, result._id);
+    await this.userService.addCommentToUser(user, result);
+    await this.postsService.addCommentToPost(postId, result);
 
     return result._id as string;
   }

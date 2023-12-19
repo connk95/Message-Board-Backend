@@ -11,6 +11,9 @@ export class Comments extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: User;
 
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Posts', required: true })
+  postId: string;
+
   @Prop()
   likes: User[];
 

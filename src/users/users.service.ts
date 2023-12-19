@@ -1,14 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import * as mongoose from 'mongoose';
 
 import { User } from './user.model';
 import { InsertUserDto, UpdateUserDto } from './user.dto';
+import { Posts } from 'src/posts/post.model';
+import { Comments } from 'src/comments/comment.model';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<User>, // private readonly postService: PostsService,
+  ) {}
 
   async insertUser({
     username,
@@ -37,12 +40,16 @@ export class UsersService {
 
   async getSingleUser(userId: string): Promise<User> {
     const user = await this.findUser(userId);
+    console.log('user service: ', user);
     return user;
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
     try {
-      const user = await this.userModel.findOne({ username }).exec();
+      const user = await this.userModel
+        .findOne({ username })
+        .populate([{ path: 'posts', populate: { path: 'text' } }, 'comments']);
+      // .exec();
       if (user && user.username == username) {
         return user;
       } else {
@@ -57,13 +64,9 @@ export class UsersService {
     const updatedUser = await this.userModel.findByIdAndUpdate(userId, body, {
       new: true,
     });
+
     if (!updatedUser) {
       throw new NotFoundException('User not found');
-    }
-
-    if (body.newPostId) {
-      const postIdObject = new mongoose.Types.ObjectId(body.newPostId);
-      updatedUser.posts.push(postIdObject);
     }
 
     await updatedUser.save();
@@ -71,10 +74,24 @@ export class UsersService {
     return updatedUser;
   }
 
-  async addCommentToUser(userId: string, commentId: string): Promise<User> {
+  async addPostToUser(userId: string, post: Posts): Promise<User> {
     const updatedUser = await this.userModel.findByIdAndUpdate(
       userId,
-      { $push: { comments: commentId } },
+      { $push: { posts: post } },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return updatedUser;
+  }
+
+  async addCommentToUser(userId: string, comment: Comments): Promise<User> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $push: { comments: comment } },
       { new: true },
     );
 
@@ -94,9 +111,11 @@ export class UsersService {
 
   private async findUser(id: string): Promise<User> {
     let user;
+    console.log('test find user, id: ', id);
     try {
+      console.log('test: ', id);
       user = await this.userModel.findById(id).populate(['posts', 'comments']);
-      // .exec();
+      console.log(user);
     } catch (error) {
       throw new NotFoundException('User not found');
     }

@@ -10,8 +10,8 @@ import { CommentsModule } from 'src/comments/comments.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]),
-    UsersModule,
+    MongooseModule.forFeature([{ name: 'Posts', schema: PostSchema }]),
+    forwardRef(() => UsersModule),
     forwardRef(() => CommentsModule),
   ],
   controllers: [PostsController],

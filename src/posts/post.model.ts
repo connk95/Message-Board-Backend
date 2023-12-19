@@ -16,7 +16,7 @@ export class Posts extends Document {
   user: User;
 
   @Prop()
-  likes: User[];
+  likes?: User[];
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' }] })
   comments?: Comments[];
