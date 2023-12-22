@@ -69,7 +69,7 @@ export class PostsService {
   async deletePost(postId: string) {
     const result = await this.postModel.deleteOne({ _id: postId }).exec();
     if (result.deletedCount === 0) {
-      throw new NotFoundException('Could not find post.');
+      throw new Error('Could not delete post');
     }
   }
 
@@ -84,10 +84,10 @@ export class PostsService {
         'user',
       ]);
     } catch (error) {
-      throw new NotFoundException(error.message);
+      throw new Error(error.message);
     }
     if (!post) {
-      throw new NotFoundException('Could not find post.');
+      throw new NotFoundException('Post not found');
     }
     return post;
   }

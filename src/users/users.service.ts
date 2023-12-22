@@ -40,7 +40,6 @@ export class UsersService {
 
   async getSingleUser(userId: string): Promise<User> {
     const user = await this.findUser(userId);
-    console.log('user service: ', user);
     return user;
   }
 
@@ -53,10 +52,10 @@ export class UsersService {
       if (user && user.username == username) {
         return user;
       } else {
-        throw new NotFoundException('User not found');
+        throw new Error('Incorrect username or password');
       }
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new Error(error.message);
     }
   }
 
@@ -105,19 +104,16 @@ export class UsersService {
   async deleteUser(userId: string) {
     const result = await this.userModel.deleteOne({ _id: userId }).exec();
     if (result.deletedCount === 0) {
-      throw new NotFoundException('User not found');
+      throw new Error('Could not delete user');
     }
   }
 
   private async findUser(id: string): Promise<User> {
     let user;
-    console.log('test find user, id: ', id);
     try {
-      console.log('test: ', id);
       user = await this.userModel.findById(id).populate(['posts', 'comments']);
-      console.log(user);
     } catch (error) {
-      throw new NotFoundException('User not found');
+      throw new Error(error.message);
     }
     if (!user) {
       throw new NotFoundException('User not found');

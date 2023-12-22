@@ -32,7 +32,6 @@ export class UsersController {
 
   @Get(':id')
   getUser(@Param('id') userId: string) {
-    console.log('test get user controller');
     return this.usersService.getSingleUser(userId);
   }
 

@@ -63,7 +63,7 @@ export class CommentsService {
   async deleteComment(commentId: string) {
     const result = await this.commentModel.deleteOne({ _id: commentId }).exec();
     if (result.deletedCount === 0) {
-      throw new NotFoundException('Could not find comment.');
+      throw new Error('Could not delete comment');
     }
   }
 
@@ -72,10 +72,10 @@ export class CommentsService {
     try {
       comment = await this.commentModel.findById(id).exec();
     } catch (error) {
-      throw new NotFoundException('Could not find comment.');
+      throw new Error(error.message);
     }
     if (!comment) {
-      throw new NotFoundException('Could not find comment.');
+      throw new NotFoundException('Comment npt found');
     }
     return comment;
   }
