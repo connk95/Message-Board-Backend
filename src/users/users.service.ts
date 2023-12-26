@@ -34,13 +34,11 @@ export class UsersService {
   }
 
   public async getUsers(): Promise<User[]> {
-    const users = await this.userModel.find().populate('username').exec();
-    return users;
+    return await this.userModel.find().populate('username').exec();
   }
 
   async getSingleUser(userId: string): Promise<User> {
-    const user = await this.findUser(userId);
-    return user;
+    return await this.findUser(userId);
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
@@ -48,7 +46,6 @@ export class UsersService {
       const user = await this.userModel
         .findOne({ username })
         .populate([{ path: 'posts', populate: { path: 'text' } }, 'comments']);
-      // .exec();
       if (user && user.username == username) {
         return user;
       } else {

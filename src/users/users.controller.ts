@@ -19,25 +19,23 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  public async addUser(@Body() body: InsertUserDto): Promise<{ id: string }> {
-    const generatedId = await this.usersService.insertUser(body);
-    return { id: generatedId };
+  public async addUser(@Body() body: InsertUserDto): Promise<string> {
+    return await this.usersService.insertUser(body);
   }
 
   @Get()
-  async getAllUsers() {
-    const users = await this.usersService.getUsers();
-    return users;
+  async getAllUsers(): Promise<User[]> {
+    return await this.usersService.getUsers();
   }
 
   @Get(':id')
-  getUser(@Param('id') userId: string) {
+  async getUser(@Param('id') userId: string): Promise<User> {
     return this.usersService.getSingleUser(userId);
   }
 
   @UseGuards(AuthGuard())
   @Get()
-  getUsername(username) {
+  async getUsername(username: string): Promise<User> {
     return this.usersService.findByUsername(username);
   }
 
@@ -50,7 +48,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async removeUser(@Param('id') userId: string) {
+  async removeUser(@Param('id') userId: string): Promise<User> {
     await this.usersService.deleteUser(userId);
     return null;
   }

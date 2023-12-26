@@ -27,7 +27,7 @@ export class CommentsService {
     });
     const result = await newComment.save();
     if (!result) {
-      throw new Error('Could not add comment');
+      throw new NotFoundException('Could not add comment');
     }
 
     await this.userService.addCommentToUser(user, result);
@@ -37,13 +37,11 @@ export class CommentsService {
   }
 
   async getComments() {
-    const comments = await this.commentModel.find().populate('user').exec();
-    return comments;
+    return await this.commentModel.find().populate('user').exec();
   }
 
   async getSingleComment(commentId: string) {
-    const comment = await this.findComment(commentId);
-    return comment;
+    return await this.findComment(commentId);
   }
 
   async updateComment(
@@ -75,7 +73,7 @@ export class CommentsService {
       throw new Error(error.message);
     }
     if (!comment) {
-      throw new NotFoundException('Comment npt found');
+      throw new NotFoundException('Comment not found');
     }
     return comment;
   }

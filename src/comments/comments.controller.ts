@@ -17,22 +17,18 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  public async addComment(
-    @Body() body: InsertCommentDto,
-  ): Promise<{ id: string }> {
-    const generatedId = await this.commentsService.insertComment(body);
-    return { id: generatedId };
+  public async addComment(@Body() body: InsertCommentDto): Promise<string> {
+    return await this.commentsService.insertComment(body);
   }
 
   @Get()
-  async getAllComments() {
-    const comments = await this.commentsService.getComments();
-    return comments;
+  async getAllComments(): Promise<Comments[]> {
+    return await this.commentsService.getComments();
   }
 
   @Get(':id')
-  getComment(@Param('id') commentId: string) {
-    return this.commentsService.getSingleComment(commentId);
+  async getComment(@Param('id') id: string): Promise<Comments> {
+    return await this.commentsService.getSingleComment(id);
   }
 
   @Patch(':id')
@@ -44,7 +40,7 @@ export class CommentsController {
   }
 
   @Delete(':id')
-  async removeComment(@Param('id') commentId: string) {
+  async removeComment(@Param('id') commentId: string): Promise<Comments> {
     await this.commentsService.deleteComment(commentId);
     return null;
   }

@@ -31,13 +31,11 @@ export class PostsService {
   }
 
   public async getPosts(): Promise<Posts[]> {
-    const posts = await this.postModel.find().populate('user').exec();
-    return posts;
+    return await this.postModel.find().populate('user').exec();
   }
 
   async getSinglePost(postId: string): Promise<Posts> {
-    const post = await this.findPost(postId);
-    return post;
+    return await this.findPost(postId);
   }
 
   async updatePost(postId: string, body?: UpdatePostDto): Promise<Posts> {

@@ -12,6 +12,7 @@ import { PostsService } from './posts.service';
 import { InsertPostDto } from './post.dto';
 import { InsertCommentDto } from 'src/comments/comment.dto';
 import { CommentsService } from 'src/comments/comments.service';
+import { Posts } from './post.model';
 
 @Controller('posts')
 export class PostsController {
@@ -21,31 +22,27 @@ export class PostsController {
   ) {}
 
   @Post()
-  public async addPost(@Body() body: InsertPostDto): Promise<{ id: string }> {
-    const generatedId = await this.postsService.insertPost(body);
-    return { id: generatedId };
+  public async addPost(@Body() body: InsertPostDto): Promise<string> {
+    return await this.postsService.insertPost(body);
   }
 
   @Patch(':id')
   public async addComment(@Body() body: InsertCommentDto): Promise<string> {
-    const generatedId = await this.commentsService.insertComment(body);
-
-    return generatedId;
+    return await this.commentsService.insertComment(body);
   }
 
   @Get()
-  async getAllPosts() {
-    const posts = await this.postsService.getPosts();
-    return posts;
+  async getAllPosts(): Promise<Posts[]> {
+    return await this.postsService.getPosts();
   }
 
   @Get(':id')
-  getPost(@Param('id') postId: string) {
-    return this.postsService.getSinglePost(postId);
+  async getPost(@Param('id') id: string): Promise<Posts> {
+    return await this.postsService.getSinglePost(id);
   }
 
   @Delete(':id')
-  async removePost(@Param('id') postId: string) {
+  async removePost(@Param('id') postId: string): Promise<Posts> {
     await this.postsService.deletePost(postId);
     return null;
   }
