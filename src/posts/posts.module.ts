@@ -7,14 +7,11 @@ import { PostsService } from './posts.service';
 import { PostSchema } from './post.model';
 import { UsersModule } from 'src/users/users.module';
 import { CommentsModule } from 'src/comments/comments.module';
-// import { CommentsService } from 'src/comments/comments.service';
-// import { UsersService } from 'src/users/users.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Post', schema: PostSchema }]),
-    UsersModule,
-    // CommentsModule,
+    MongooseModule.forFeature([{ name: 'Posts', schema: PostSchema }]),
+    forwardRef(() => UsersModule),
     forwardRef(() => CommentsModule),
   ],
   controllers: [PostsController],

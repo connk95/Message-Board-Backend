@@ -11,14 +11,12 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req) {
-    console.log('test controller');
     return this.authService.login(req.user);
   }
 
   @UseGuards(LocalAuthGuard)
   @Post('logout')
   async logout(@Request() req) {
-    console.log('test logout');
     req.logout(function (error) {
       if (error) {
         return error;
@@ -28,8 +26,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    console.log('test get profile');
+  async getProfile(@Request() req) {
     return req.user;
   }
 }

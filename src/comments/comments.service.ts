@@ -27,31 +27,21 @@ export class CommentsService {
     });
     const result = await newComment.save();
     if (!result) {
-      throw new Error('Could not add comment');
+      throw new NotFoundException('Could not add comment');
     }
-    console.log('test comment service');
 
-    console.log(result);
-
-    console.log('comment service post: ', postId);
-    console.log('comment service user: ', user);
-    console.log('comment service text: ', text);
-
-    await this.userService.addCommentToUser(user, result._id);
-    await this.postsService.addCommentToPost(postId, result._id);
-    // await this.postsService.updatePost(post, result.id);
+    await this.userService.addCommentToUser(user, result);
+    await this.postsService.addCommentToPost(postId, result);
 
     return result._id as string;
   }
 
   async getComments() {
-    const comments = await this.commentModel.find().populate('user').exec();
-    return comments;
+    return await this.commentModel.find().populate('user').exec();
   }
 
   async getSingleComment(commentId: string) {
-    const comment = await this.findComment(commentId);
-    return comment;
+    return await this.findComment(commentId);
   }
 
   async updateComment(
@@ -71,7 +61,7 @@ export class CommentsService {
   async deleteComment(commentId: string) {
     const result = await this.commentModel.deleteOne({ _id: commentId }).exec();
     if (result.deletedCount === 0) {
-      throw new NotFoundException('Could not find comment.');
+      throw new Error('Could not delete comment');
     }
   }
 
@@ -80,10 +70,10 @@ export class CommentsService {
     try {
       comment = await this.commentModel.findById(id).exec();
     } catch (error) {
-      throw new NotFoundException('Could not find comment.');
+      throw new Error(error.message);
     }
     if (!comment) {
-      throw new NotFoundException('Could not find comment.');
+      throw new NotFoundException('Comment not found');
     }
     return comment;
   }
