@@ -4,10 +4,10 @@ Welcome to my message board! This project aims to create a simple message board/
 
 ## Table of Contents
 
-- [Features](https://github.com/connk95/Message-Board-Backend/main/README.md#features)
+- [Features](https://github.com/connk95/Message-Board-Backend/blob/main/README.md#features)
 - [Installation](https://github.com/connk95/Message-Board-Backend/blob/main/README.md#installation)
 - [Code Description](https://github.com/connk95/Message-Board-Backend/blob/main/README.md#code-description)
-- [Contributing](https://github.com/Message-Board-Backend/blob/main/README.md#contributing)
+- [Contributing](https://github.com/connk95/Message-Board-Backend/blob/main/README.md#contributing)
 - [License](https://github.com/connk95/Message-Board-Backend/blob/main/README.md#license)
 - [Acknowledgements](https://github.com/connk95/Message-Board-Backend/blob/main/README.md#acknowledgements)
 
